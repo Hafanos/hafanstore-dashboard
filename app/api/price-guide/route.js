@@ -2,11 +2,11 @@ import { blFetch } from '@/lib/bricklink';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  let setNumber = searchParams.get('setNumber')?.trim();
+  let setNumber = searchParams.get('set')?.trim();
   const condition = searchParams.get('condition') === 'U' ? 'U' : 'N';
 
   if (!setNumber) {
-    return Response.json({ error: 'Missing setNumber' }, { status: 400 });
+    return Response.json({ error: 'Missing set' }, { status: 400 });
   }
 
   // BrickLink requires the variant suffix; default to -1 when omitted.
@@ -36,7 +36,7 @@ export async function GET(request) {
     const salesPerMonth = totalUnits / 6;
 
     return Response.json({
-      setNumber,
+      set: setNumber,
       condition,
       avgSoldPrice,
       salesPerMonth,

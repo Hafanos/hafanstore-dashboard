@@ -30,7 +30,7 @@ export default function SetAnalyzer() {
 
     try {
       const res = await fetch(
-        `/api/price-guide?setNumber=${encodeURIComponent(setNumber.trim())}&condition=${condition}`,
+        `/api/price-guide?set=${encodeURIComponent(setNumber.trim())}&condition=${condition}`,
       );
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
@@ -136,7 +136,7 @@ export default function SetAnalyzer() {
         {result && (
           <div className="space-y-3">
             <p className="text-xs text-slate-500 font-mono">
-              Set {result.setNumber}
+              Set {result.set}
               {' '}&middot;{' '}
               {result.condition === 'N' ? 'New' : 'Used'}
               {' '}&middot;{' '}
