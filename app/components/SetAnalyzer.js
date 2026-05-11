@@ -94,20 +94,17 @@ export default function SetAnalyzer() {
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Purchase Price
+              Purchase Price (Kč)
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm select-none">
-                $
-              </span>
               <input
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 value={purchasePrice}
                 onChange={e => setPurchasePrice(e.target.value)}
-                placeholder="0.00"
-                className="bg-slate-800 border border-slate-700 rounded-lg pl-7 pr-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 w-32 tabular-nums"
+                placeholder="0"
+                className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 w-32 tabular-nums"
               />
             </div>
           </div>
@@ -146,8 +143,8 @@ export default function SetAnalyzer() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <ResultStat
                 label="Avg Sold Price"
-                value={`$${result.avgSoldPrice.toFixed(2)}`}
-                sub={`${result.currencyCode} · qty-weighted`}
+                value={`${Math.round(result.avgSoldPrice).toLocaleString('cs-CZ')} Kč`}
+                sub="qty-weighted"
               />
               <ResultStat
                 label="Sales / Month"
@@ -156,13 +153,13 @@ export default function SetAnalyzer() {
               />
               <ResultStat
                 label="Net After 3% Fee"
-                value={`$${netAfterFees.toFixed(2)}`}
+                value={`${Math.round(netAfterFees).toLocaleString('cs-CZ')} Kč`}
                 sub="after BrickLink seller fee"
               />
               <ResultStat
                 label="ROI"
                 value={roi !== null ? `${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%` : '—'}
-                sub={purchase > 0 ? `vs $${purchase.toFixed(2)} paid` : 'enter purchase price'}
+                sub={purchase > 0 ? `vs ${purchase.toLocaleString('cs-CZ')} Kč paid` : 'enter purchase price'}
                 color={
                   roi === null
                     ? 'text-slate-500'
