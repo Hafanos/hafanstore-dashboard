@@ -9,13 +9,12 @@ export async function GET(request) {
     return Response.json({ error: 'Missing set' }, { status: 400 });
   }
 
-  // BrickLink requires the variant suffix; default to -1 when omitted.
   if (!setNumber.includes('-')) {
     setNumber = `${setNumber}-1`;
   }
 
   try {
-    const data = await blFetch(`/items/S/${setNumber}/price`, {
+    const data = await blFetch(`/items/SET/${setNumber}/price`, {
       guide_type: 'sold',
       new_or_used: condition,
     });
