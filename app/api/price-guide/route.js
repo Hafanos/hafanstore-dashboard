@@ -2,15 +2,20 @@ import { blFetch } from '@/lib/bricklink';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const setNumber = searchParams.get('setNumber')?.trim();
+  let setNumber = searchParams.get('setNumber')?.trim();
   const condition = searchParams.get('condition') === 'U' ? 'U' : 'N';
 
   if (!setNumber) {
     return Response.json({ error: 'Missing setNumber' }, { status: 400 });
   }
 
+  // BrickLink requires the variant suffix; default to -1 when omitted.
+  if (!setNumber.includes('-')) {
+    setNumber = `${setNumber}-1`;
+  }
+
   try {
-    const data = await blFetch(`/items/S/${encodeURIComponent(setNumber)}/price`, {
+    const data = await blFetch(`/items/S/${setNumber}/price`, {
       guide_type: 'sold',
       new_or_used: condition,
     });
