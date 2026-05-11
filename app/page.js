@@ -1,4 +1,5 @@
 import { blFetch } from '@/lib/bricklink';
+import SetAnalyzer from '@/app/components/SetAnalyzer';
 
 async function fetchSafe(path, params = {}) {
   try {
@@ -156,6 +157,9 @@ export default async function Dashboard() {
             color="text-green-400"
           />
         </div>
+
+        {/* Set Analyzer */}
+        <SetAnalyzer />
 
         {/* Inventory */}
         <section>
