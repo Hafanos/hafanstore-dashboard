@@ -10,32 +10,46 @@ async function fetchSafe(path, params = {}) {
   }
 }
 
-function StatsCard({ label, value, sub, color = 'text-white' }) {
+function StatsCard({ label, value, sub, accent, valueClass = 'text-white', icon }) {
   return (
-    <div className="bg-slate-900 rounded-xl p-5 border border-slate-800 flex flex-col gap-1.5">
-      <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</span>
-      <span className={`text-3xl font-bold tabular-nums ${color}`}>{value}</span>
-      {sub && <span className="text-slate-500 text-xs">{sub}</span>}
+    <div className="relative overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/60 p-5">
+      <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r ${accent} to-transparent`} />
+      <div className="mb-3 flex items-start justify-between">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">{label}</span>
+        <span className="text-slate-700">{icon}</span>
+      </div>
+      <div className={`text-3xl font-bold tabular-nums tracking-tight ${valueClass}`}>{value}</div>
+      {sub && <div className="mt-1.5 text-xs text-slate-600">{sub}</div>}
+    </div>
+  );
+}
+
+function SectionHeader({ title, meta }) {
+  return (
+    <div className="mb-4 flex items-center gap-2.5">
+      <div className="h-4 w-0.5 rounded-full bg-gradient-to-b from-blue-400 to-blue-700" />
+      <h2 className="text-sm font-semibold tracking-tight text-slate-100">{title}</h2>
+      {meta && <span className="ml-auto text-xs text-slate-600">{meta}</span>}
     </div>
   );
 }
 
 function StatusBadge({ status }) {
   const map = {
-    PENDING:    'bg-yellow-500/15 text-yellow-300 border-yellow-500/30',
-    UPDATED:    'bg-orange-500/15 text-orange-300 border-orange-500/30',
-    PROCESSING: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-    READY:      'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
-    PAID:       'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    PACKED:     'bg-teal-500/15 text-teal-300 border-teal-500/30',
-    SHIPPED:    'bg-purple-500/15 text-purple-300 border-purple-500/30',
-    RECEIVED:   'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
-    COMPLETED:  'bg-slate-500/15 text-slate-400 border-slate-500/30',
-    CANCELLED:  'bg-red-500/15 text-red-400 border-red-500/30',
+    PENDING:    'bg-yellow-500/10 text-yellow-300 border-yellow-500/20',
+    UPDATED:    'bg-orange-500/10 text-orange-300 border-orange-500/20',
+    PROCESSING: 'bg-blue-500/10 text-blue-300 border-blue-500/20',
+    READY:      'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
+    PAID:       'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+    PACKED:     'bg-teal-500/10 text-teal-300 border-teal-500/20',
+    SHIPPED:    'bg-purple-500/10 text-purple-300 border-purple-500/20',
+    RECEIVED:   'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+    COMPLETED:  'bg-slate-700/30 text-slate-400 border-slate-700/30',
+    CANCELLED:  'bg-red-500/10 text-red-400 border-red-500/20',
   };
-  const cls = map[status] || 'bg-slate-500/15 text-slate-400 border-slate-500/30';
+  const cls = map[status] || 'bg-slate-700/30 text-slate-400 border-slate-700/30';
   return (
-    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${cls}`}>
+    <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-semibold tracking-wide ${cls}`}>
       {status}
     </span>
   );
@@ -43,16 +57,15 @@ function StatusBadge({ status }) {
 
 function ErrorBanner({ message }) {
   return (
-    <div className="flex items-start gap-3 bg-red-950/50 border border-red-800/60 rounded-lg px-4 py-3 text-red-300 text-sm">
-      <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="flex items-start gap-3 rounded-xl border border-red-900/40 bg-red-950/30 px-4 py-3.5 text-sm text-red-300">
+      <svg className="mt-0.5 h-4 w-4 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
           d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
       </svg>
       <div>
-        <strong>BrickLink API Error:</strong> {message}
-        <p className="text-red-400/70 text-xs mt-0.5">
-          Ensure BRICKLINK_CONSUMER_KEY, BRICKLINK_CONSUMER_SECRET, BRICKLINK_TOKEN, and
-          BRICKLINK_TOKEN_SECRET are set in your .env.local file.
+        <span className="font-semibold">BrickLink API error:</span> {message}
+        <p className="mt-0.5 text-xs text-red-400/60">
+          Check that all four BRICKLINK_* env vars are set in .env.local.
         </p>
       </div>
     </div>
@@ -61,12 +74,12 @@ function ErrorBanner({ message }) {
 
 function EmptyState({ message }) {
   return (
-    <div className="py-16 text-center text-slate-500">
-      <svg className="w-10 h-10 mx-auto mb-3 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="py-16 text-center">
+      <svg className="mx-auto mb-3 h-10 w-10 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
       </svg>
-      <p className="text-sm">{message}</p>
+      <p className="text-sm text-slate-600">{message}</p>
     </div>
   );
 }
@@ -95,31 +108,31 @@ export default async function Dashboard() {
   );
 
   const errors = [invResult.error, ordResult.error].filter(Boolean);
-  const dateStr = new Date().toLocaleDateString('en-US', {
+  const dateStr = new Date().toLocaleDateString('cs-CZ', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#020817' }}>
+    <div className="min-h-screen flex flex-col">
 
       {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+      <header className="sticky top-0 z-10 border-b border-white/[0.05] bg-[#030712]/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-sm select-none">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-bold text-white shadow-lg shadow-blue-500/20 select-none">
               H
             </div>
             <div>
-              <h1 className="text-base font-bold text-white leading-tight">HafanStore</h1>
-              <p className="text-xs text-slate-500 leading-tight">BrickLink Seller Dashboard</p>
+              <h1 className="text-sm font-bold tracking-tight text-white">HafanStore</h1>
+              <p className="text-xs text-slate-500">BrickLink Dashboard</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-slate-500 hidden sm:block">{dateStr}</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-xs text-slate-600 sm:block">{dateStr}</span>
             <a
               href="/api/bricklink?endpoint=/inventories"
               target="_blank"
-              className="text-xs text-slate-600 hover:text-slate-400 transition-colors font-mono"
+              className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-1.5 font-mono text-xs text-slate-500 transition-colors hover:border-slate-700 hover:text-slate-300"
             >
               API
             </a>
@@ -128,7 +141,7 @@ export default async function Dashboard() {
       </header>
 
       {/* Main */}
-      <main className="flex-1 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto w-full space-y-8">
+      <main className="mx-auto w-full max-w-[1400px] flex-1 space-y-8 px-4 py-8 sm:px-6">
 
         {errors.map((e, i) => <ErrorBanner key={i} message={e} />)}
 
@@ -136,25 +149,53 @@ export default async function Dashboard() {
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatsCard
             label="Total Lots"
-            value={totalLots.toLocaleString()}
+            value={totalLots.toLocaleString('cs-CZ')}
             sub="unique inventory lines"
+            accent="from-blue-500/50"
+            icon={
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            }
           />
           <StatsCard
             label="Total Pieces"
-            value={totalQty.toLocaleString()}
+            value={totalQty.toLocaleString('cs-CZ')}
             sub="units in stock"
+            accent="from-violet-500/50"
+            icon={
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            }
           />
           <StatsCard
             label="Open Orders"
-            value={openOrders.length.toLocaleString()}
+            value={openOrders.length.toLocaleString('cs-CZ')}
             sub="awaiting fulfillment"
-            color="text-yellow-400"
+            accent="from-amber-500/50"
+            valueClass="text-amber-400"
+            icon={
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
           />
           <StatsCard
             label="Pending Revenue"
-            value={`$${pendingRevenue.toFixed(2)}`}
+            value={`${Math.round(pendingRevenue).toLocaleString('cs-CZ')} Kč`}
             sub="from open orders"
-            color="text-green-400"
+            accent="from-emerald-500/50"
+            valueClass="text-emerald-400"
+            icon={
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            }
           />
         </div>
 
@@ -163,27 +204,26 @@ export default async function Dashboard() {
 
         {/* Inventory */}
         <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold text-white">Inventory</h2>
-            <span className="text-xs text-slate-500">
-              {totalLots.toLocaleString()} lots &mdash; ${totalValue.toFixed(2)} total value
-            </span>
-          </div>
-
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+          <SectionHeader
+            title="Inventory"
+            meta={`${totalLots.toLocaleString('cs-CZ')} lots · ${Math.round(totalValue).toLocaleString('cs-CZ')} Kč`}
+          />
+          <div className="overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/40">
             {inventory.length === 0 ? (
               <EmptyState message={invResult.error ? 'Failed to load inventory.' : 'No inventory items found.'} />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-800/60 border-b border-slate-700/60">
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Item</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Color</th>
-                      <th className="px-4 py-2.5 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">Cond.</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Qty</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Unit Price</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Value</th>
+                    <tr className="border-b border-slate-800/60 bg-slate-900/80">
+                      {['Item', 'Color', 'Cond.', 'Qty', 'Unit Price', 'Total Value'].map((h, i) => (
+                        <th
+                          key={h}
+                          className={`px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-slate-500 ${i >= 3 ? 'text-right' : i === 2 ? 'text-center' : 'text-left'}`}
+                        >
+                          {h}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -193,30 +233,26 @@ export default async function Dashboard() {
                       return (
                         <tr
                           key={item.inventory_id ?? idx}
-                          className="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors"
+                          className="border-b border-slate-800/30 transition-colors duration-100 hover:bg-slate-800/20"
                         >
                           <td className="px-4 py-3">
-                            <div className="font-medium text-slate-100 leading-snug">
-                              {item.item?.name || '—'}
-                            </div>
-                            <div className="text-xs text-slate-500 font-mono">{item.item?.no}</div>
+                            <div className="font-medium leading-snug text-slate-200">{item.item?.name || '—'}</div>
+                            <div className="mt-0.5 font-mono text-[10px] text-slate-600">{item.item?.no}</div>
                           </td>
-                          <td className="px-4 py-3 text-slate-300 whitespace-nowrap">
-                            {item.color_name || '—'}
-                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-slate-400">{item.color_name || '—'}</td>
                           <td className="px-4 py-3 text-center">
-                            <span className={`text-xs font-semibold ${item.new_or_used === 'N' ? 'text-green-400' : 'text-amber-400'}`}>
-                              {item.new_or_used === 'N' ? 'New' : 'Used'}
+                            <span className={`text-[10px] font-semibold tracking-wide ${item.new_or_used === 'N' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                              {item.new_or_used === 'N' ? 'NEW' : 'USED'}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-right font-medium text-slate-100 tabular-nums">
-                            {qty.toLocaleString()}
+                          <td className="px-4 py-3 text-right font-medium tabular-nums text-slate-200">
+                            {qty.toLocaleString('cs-CZ')}
                           </td>
-                          <td className="px-4 py-3 text-right text-slate-300 tabular-nums">
-                            ${unitPrice.toFixed(2)}
+                          <td className="px-4 py-3 text-right font-mono tabular-nums text-slate-400">
+                            {unitPrice.toFixed(2)}
                           </td>
-                          <td className="px-4 py-3 text-right font-medium text-slate-200 tabular-nums">
-                            ${(unitPrice * qty).toFixed(2)}
+                          <td className="px-4 py-3 text-right font-mono font-semibold tabular-nums text-slate-200">
+                            {(unitPrice * qty).toFixed(2)}
                           </td>
                         </tr>
                       );
@@ -224,8 +260,8 @@ export default async function Dashboard() {
                   </tbody>
                 </table>
                 {inventory.length > 200 && (
-                  <div className="px-4 py-3 text-center text-xs text-slate-500 border-t border-slate-800">
-                    Showing 200 of {inventory.length.toLocaleString()} lots
+                  <div className="border-t border-slate-800/40 px-4 py-3 text-center text-xs text-slate-600">
+                    Showing 200 of {inventory.length.toLocaleString('cs-CZ')} lots
                   </div>
                 )}
               </div>
@@ -235,27 +271,29 @@ export default async function Dashboard() {
 
         {/* Orders */}
         <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold text-white">Orders</h2>
-            <span className="text-xs text-slate-500">
-              {openOrders.length} open &mdash; {orders.length} total
-            </span>
-          </div>
-
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+          <SectionHeader
+            title="Orders"
+            meta={`${openOrders.length} open · ${orders.length} total`}
+          />
+          <div className="overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/40">
             {orders.length === 0 ? (
               <EmptyState message={ordResult.error ? 'Failed to load orders.' : 'No orders found.'} />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-800/60 border-b border-slate-700/60">
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Order ID</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Buyer</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Lots</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
+                    <tr className="border-b border-slate-800/60 bg-slate-900/80">
+                      {[
+                        ['Order ID', 'left'], ['Buyer', 'left'], ['Date', 'left'],
+                        ['Status', 'left'], ['Lots', 'right'], ['Total', 'right'],
+                      ].map(([h, align]) => (
+                        <th
+                          key={h}
+                          className={`px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-slate-500 text-${align}`}
+                        >
+                          {h}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -264,27 +302,25 @@ export default async function Dashboard() {
                       const total = parseFloat(cost.grand_total || 0);
                       const currency = cost.currency_code || 'USD';
                       const date = order.date_ordered
-                        ? new Date(order.date_ordered).toLocaleDateString('en-US', {
-                            month: 'short', day: 'numeric', year: 'numeric',
+                        ? new Date(order.date_ordered).toLocaleDateString('cs-CZ', {
+                            day: 'numeric', month: 'short', year: 'numeric',
                           })
                         : '—';
                       return (
                         <tr
                           key={order.order_id ?? idx}
-                          className="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors"
+                          className="border-b border-slate-800/30 transition-colors duration-100 hover:bg-slate-800/20"
                         >
-                          <td className="px-4 py-3 font-mono text-blue-400 font-semibold whitespace-nowrap">
+                          <td className="px-4 py-3 font-mono text-xs font-semibold text-blue-400 whitespace-nowrap">
                             #{order.order_id}
                           </td>
                           <td className="px-4 py-3 text-slate-300">{order.buyer_name || '—'}</td>
-                          <td className="px-4 py-3 text-slate-400 whitespace-nowrap">{date}</td>
-                          <td className="px-4 py-3">
-                            <StatusBadge status={order.status} />
-                          </td>
-                          <td className="px-4 py-3 text-right text-slate-300 tabular-nums">
+                          <td className="px-4 py-3 text-xs whitespace-nowrap text-slate-500">{date}</td>
+                          <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
+                          <td className="px-4 py-3 text-right tabular-nums text-slate-400">
                             {order.unique_count ?? order.total_count ?? '—'}
                           </td>
-                          <td className="px-4 py-3 text-right font-semibold text-slate-100 tabular-nums whitespace-nowrap">
+                          <td className="px-4 py-3 text-right font-mono text-xs font-semibold tabular-nums whitespace-nowrap text-slate-100">
                             {currency} {total.toFixed(2)}
                           </td>
                         </tr>
@@ -296,10 +332,11 @@ export default async function Dashboard() {
             )}
           </div>
         </section>
+
       </main>
 
-      <footer className="border-t border-slate-800 px-6 py-4 text-center text-xs text-slate-700">
-        HafanStore Dashboard &mdash; data cached for 60s &middot; powered by BrickLink API
+      <footer className="border-t border-white/[0.04] px-6 py-5 text-center">
+        <p className="text-xs text-slate-700">HafanStore Dashboard · data cached 60s · BrickLink API</p>
       </footer>
     </div>
   );
