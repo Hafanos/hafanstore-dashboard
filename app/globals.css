@@ -4,33 +4,74 @@
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: #030712;
-  background-image: radial-gradient(ellipse 100% 55% at 50% -5%, rgba(59, 130, 246, 0.08) 0%, transparent 65%);
-  color: #e2e8f0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background-color: #07080d;
+  background-image:
+    radial-gradient(ellipse 90% 50% at 50% -8%, rgba(59, 130, 246, 0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 35% at 85% 95%, rgba(99, 102, 241, 0.06) 0%, transparent 55%);
+  color: #cbd5e1;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'rlig' 1, 'calt' 1;
 }
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.07); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* ── Keyframes ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0);     }
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 99px;
+/* ── Animation utilities ── */
+.fade-up {
+  animation: fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #2d3f55;
+.fade-in {
+  animation: fadeIn 0.4s ease both;
+}
+
+.d-0  { animation-delay:  40ms; }
+.d-1  { animation-delay:  90ms; }
+.d-2  { animation-delay: 140ms; }
+.d-3  { animation-delay: 190ms; }
+.d-4  { animation-delay: 260ms; }
+.d-5  { animation-delay: 340ms; }
+
+/* ── Skeleton shimmer ── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+/* ── Table alternating rows ── */
+tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.015);
 }
