@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\admin\\\\Desktop\\\\hafanstore-dashboard\" -Recurse -Force -Exclude \"node_modules\",\".next\" | Where-Object { $_.FullName -notmatch \"node_modules|\\\\.next\" } | Select-Object FullName)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Test-Path *)"
+    ]
+  }
+}
